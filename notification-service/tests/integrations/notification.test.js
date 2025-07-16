@@ -9,21 +9,33 @@ describe('Notification Service Integration Test', () => {
     let socketClient;
 
     beforeAll(async () => {
+        console.log('Creating Kafka producer...');
         kafkaProducer = kafka.producer();
+
+        console.log('Connecting Kafka...');
         await kafkaProducer.connect();
 
+        console.log('Connecting WebSocket...');
         socketClient = io(NOTIFICATION_URL, { transports: ['websocket'] });
 
-        // Attendre la connexion socket
-        await new Promise(resolve => socketClient.on('connect', resolve));
+        await new Promise(resolve => {
+            socketClient.on('connect', () => {
+                console.log('WebSocket connected');
+                resolve();
+            });
+        });
 
-        // Authentifier et attendre confirmation
+        console.log('Authenticating...');
         await new Promise((resolve, reject) => {
             socketClient.emit('authenticate', 1);
-            socketClient.once('authenticated', resolve);
+            socketClient.once('authenticated', () => {
+                console.log('Authenticated!');
+                resolve();
+            });
             setTimeout(() => reject(new Error('Timeout: authentication non reçue')), 5000);
         });
     }, TEST_TIMEOUT);
+
 
     afterAll(async () => {
         await kafkaProducer.disconnect();
