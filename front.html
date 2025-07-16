@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de Bord Microservices</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f4f7f6; color: #333; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; }
+        section { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+        h1 { text-align: center; border: none; }
+        h2 { font-size: 1.2em; }
+        h3 { font-size: 1.1em; border-bottom: 1px solid #eee; margin-top: 20px; }
+        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        input, button { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+        button { background-color: #3498db; color: white; cursor: pointer; border: none; transition: background-color 0.2s; }
+        button:hover { background-color: #2980b9; }
+        button.delete { background-color: #e74c3c; }
+        button.delete:hover { background-color: #c0392b; }
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        #result-box { grid-column: 1 / -1; background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; min-height: 150px; max-height: 400px; overflow-y: auto; }
+        #user-status { text-align: center; padding: 10px; background: #fdf2f2; border: 1px solid #e74c3c; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        #notifications ul { list-style-type: none; padding: 0; max-height: 200px; overflow-y: auto; }
+        #notifications li { background: #fff8e1; padding: 8px; border-left: 4px solid #f1c40f; margin-bottom: 5px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <h1>Tableau de Bord de Contrôle des Microservices</h1>
+
+    <div id="user-status">Statut : Non connecté</div>
+    <pre id="result-box">Les résultats des requêtes API apparaîtront ici.</pre>
+
+    <div class="container">
+        <!-- USER SERVICE -->
+        <section>
+            <h2>User Service (localhost:3001)</h2>
+            <form id="register-form">
+                <h3>Register (/auth)</h3>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                <button type="submit">S'inscrire</button>
+            </form>
+            <form id="login-form">
+                <h3>Login (/auth)</h3>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                <button type="submit">Se connecter</button>
+            </form>
+            <h3>Favorites (/users, requiert une connexion)</h3>
+            <button id="get-favorites-btn">Voir mes favoris</button>
+            <form id="add-favorite-form">
+                <input type="number" name="matchId" placeholder="ID du match" required>
+                <button type="submit">Ajouter un favori</button>
+            </form>
+        </section>
+
+        <!-- MATCH SERVICE -->
+        <section>
+            <h2>Match Service (localhost:3000)</h2>
+            <h3>Récupération des Matchs</h3>
+            <div class="grid-buttons">
+                <button id="fetch-all-match-btn">Tous les matchs (POST)</button>
+                <button id="get-upcoming-btn">Matchs à venir (GET)</button>
+                <button id="get-live-btn">Matchs en direct (GET)</button>
+            </div>
+            <h3>Gestion des Matchs</h3>
+            <form id="create-match-form">
+                <input type="text" name="team1" placeholder="Équipe 1" required>
+                <input type="text" name="team2" placeholder="Équipe 2" required>
+                <button type="submit">Créer un match</button>
+            </form>
+            <form id="update-match-form">
+                <input type="number" name="id" placeholder="ID du match à MAJ" required>
+                <input type="number" name="goals_team1" placeholder="Buts Équipe 1" required>
+                <input type="number" name="goals_team2" placeholder="Buts Équipe 2" required>
+                <input type="text" name="status" placeholder="Statut (ex: live, finished)" required>
+                <button type="submit">Mettre à jour le match</button>
+            </form>
+            <form id="delete-match-form">
+                <input type="number" name="id" placeholder="ID du match à supprimer" required>
+                <button type="submit" class="delete">Supprimer le match</button>
+            </form>
+        </section>
+
+        <!-- GAMIFICATION SERVICE -->
+        <section>
+            <h2>Gamification Service (localhost:3002)</h2>
+            <h3>Paris (Requiert une connexion)</h3>
+            <form id="place-bet-form">
+                <input type="number" name="matchId" placeholder="ID du match" required>
+                <input type="text" name="prediction" placeholder="Prédiction (ex: team1_wins)" required>
+                <button type="submit">Placer un pari</button>
+            </form>
+            <button id="get-bets-btn">Voir mon historique de paris</button>
+
+            <h3>Résolution (Admin)</h3>
+            <form id="resolve-bets-form">
+                <input type="number" name="matchId" placeholder="ID du match terminé" required>
+                <input type="text" name="winner" placeholder="Prédiction gagnante" required>
+                <button type="submit">Résoudre les paris</button>
+            </form>
+        </section>
+
+        <!-- NOTIFICATION SERVICE -->
+        <section id="notifications">
+            <h2>Notification Service (localhost:3003)</h2>
+            <h3>Notifications en temps réel</h3>
+            <p>Se connecte automatiquement après le login.</p>
+            <ul id="notifications-list"></ul>
+        </section>
+    </div>
+
+    <!-- SCRIPT INCLUSIONS -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <!-- MAIN SCRIPT -->
+    <script>
+        // --- CONFIGURATION ET ÉTAT GLOBAL ---
+        const MATCH_API = 'http://localhost:3000/matchs';
+        const USER_AUTH_API = 'http://localhost:3001/auth'; // Pour /register et /login
+        const USER_PROFILE_API = 'http://localhost:3001/users'; // Pour les actions liées au profil utilisateur comme /favorites
+        const GAMIFICATION_API = 'http://localhost:3002';
+        const NOTIFICATION_URL = 'http://localhost:3003';
+
+        let authToken = null;
+        let currentUserId = null;
+        let socket = null;
+
+        const resultBox = document.getElementById('result-box');
+        const userStatus = document.getElementById('user-status');
+        const notificationsList = document.getElementById('notifications-list');
+
+        // --- HELPER POUR LES REQUÊTES API ---
+        async function apiRequest(url, method = 'GET', body = null) {
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+                const options = {
+                    method,
+                    headers,
+                    body: body ? JSON.stringify(body) : null
+                };
+                const response = await fetch(url, options);
+
+                const data = await response.json();
+                resultBox.textContent = JSON.stringify(data, null, 2);
+
+                if (!response.ok) {
+                    console.error('Réponse API non-OK:', data);
+                    resultBox.textContent += `\n\n--- ERREUR SERVEUR (Code: ${response.status}) ---`;
+                }
+
+                return data;
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    resultBox.textContent = `Erreur de format de réponse : Le serveur n'a pas renvoyé de JSON valide. Vérifiez les logs du backend.`;
+                } else {
+                    resultBox.textContent = `Erreur de connexion à l'API: ${error.message}`;
+                }
+                console.error('Fetch Error:', error);
+            }
+        }
+
+        // --- GESTION DES NOTIFICATIONS WEBSOCKET ---
+        function connectWebSocket() {
+            if (socket) socket.disconnect();
+            socket = io(NOTIFICATION_URL, { transports: ["websocket"] });
+            socket.on('connect', () => {
+                addNotification('Connecté au serveur de notification.');
+                if (currentUserId) {
+                    socket.emit('authenticate', currentUserId);
+                }
+            });
+            socket.on('match.started', data => addNotification(`Début du match ${data.matchId}`));
+            socket.on('match.goal', data => addNotification(`BUT! Match ${data.matchId}. Score: ${data.score}`));
+            socket.on('match.statusChanged', data => addNotification(`Statut du match ${data.matchId} : ${data.newStatus}`));
+            socket.on('match.finished', data => addNotification(`Fin du match ${data.matchId}`));
+            socket.on('bet.resolved', data => addNotification(`Pari résolu! Match ${data.matchId}, Résultat: ${data.outcome}`));
+            socket.on('disconnect', () => addNotification('Déconnecté du serveur de notification.'));
+        }
+
+        function addNotification(message) {
+            const li = document.createElement('li');
+            li.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            notificationsList.prepend(li);
+        }
+
+        // --- GESTIONNAIRES D'ÉVÉNEMENTS ---
+        document.addEventListener('submit', (e) => e.preventDefault());
+
+        // User Service
+        document.getElementById('register-form').addEventListener('submit', async e => {
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            await apiRequest(`${USER_AUTH_API}/register`, 'POST', body);
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async e => {
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            const data = await apiRequest(`${USER_AUTH_API}/login`, 'POST', body);
+            if (data && data.token) {
+                authToken = data.token;
+                currentUserId = data.user.id;
+                userStatus.textContent = `Connecté en tant que: ${data.user.email} (ID: ${currentUserId})`;
+                userStatus.style.background = '#eafaf1';
+                userStatus.style.borderColor = '#2ecc71';
+                connectWebSocket();
+            }
+        });
+
+        document.getElementById('get-favorites-btn').addEventListener('click', () => {
+            if (!authToken) return alert('Veuillez vous connecter.');
+            apiRequest(`${USER_PROFILE_API}/favorites`, 'GET');
+        });
+
+        document.getElementById('add-favorite-form').addEventListener('submit', async e => {
+            if (!authToken) return alert('Veuillez vous connecter.');
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            await apiRequest(`${USER_PROFILE_API}/favorites`, 'POST', { matchId: parseInt(body.matchId) });
+        });
+
+        // Match Service
+        document.getElementById('fetch-all-match-btn').addEventListener('click', () => apiRequest(`${MATCH_API}/fetchAllMatch`, 'POST'));
+        document.getElementById('get-upcoming-btn').addEventListener('click', () => apiRequest(`${MATCH_API}/upcoming`, 'GET'));
+        document.getElementById('get-live-btn').addEventListener('click', () => apiRequest(`${MATCH_API}/live`, 'GET'));
+
+        document.getElementById('create-match-form').addEventListener('submit', async e => {
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            await apiRequest(MATCH_API, 'POST', body);
+        });
+
+        document.getElementById('update-match-form').addEventListener('submit', async e => {
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            await apiRequest(`${MATCH_API}/update`, 'POST', {
+                id: parseInt(body.id),
+                goals_team1: parseInt(body.goals_team1),
+                goals_team2: parseInt(body.goals_team2),
+                status: body.status
+            });
+        });
+
+        document.getElementById('delete-match-form').addEventListener('submit', async e => {
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            await apiRequest(MATCH_API, 'DELETE', { id: parseInt(body.id) });
+        });
+
+        // Gamification Service
+        document.getElementById('place-bet-form').addEventListener('submit', async e => {
+            if (!authToken) return alert('Veuillez vous connecter.');
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            const betPayload = {
+                userId: currentUserId,
+                matchId: parseInt(body.matchId),
+                prediction: body.prediction
+            };
+            await apiRequest(`${GAMIFICATION_API}/bets`, 'POST', betPayload);
+        });
+
+        document.getElementById('get-bets-btn').addEventListener('click', () => {
+            if (!authToken) return alert('Veuillez vous connecter.');
+            apiRequest(`${GAMIFICATION_API}/bets`, 'GET');
+        });
+
+        document.getElementById('resolve-bets-form').addEventListener('submit', async e => {
+            const formData = new FormData(e.target);
+            const body = Object.fromEntries(formData.entries());
+            await apiRequest(`${GAMIFICATION_API}/bets/resolve`, 'POST', {
+                matchId: parseInt(body.matchId),
+                winner: body.winner
+            });
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="6" failures="6" errors="0" time="4.172">
+  <testsuite name="Match Routes Integration Tests" errors="0" failures="6" skipped="0" timestamp="2025-07-03T20:41:46" time="4.056" tests="6">
+    <testcase classname="Match Routes Integration Tests POST /matchs/fetchAllMatch returns all matches" name="Match Routes Integration Tests POST /matchs/fetchAllMatch returns all matches" time="0.097">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\tests\integration\matchs.test.js:18:5)</failure>
+    </testcase>
+    <testcase classname="Match Routes Integration Tests POST /matchs creates a new match" name="Match Routes Integration Tests POST /matchs creates a new match" time="0.051">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\tests\integration\matchs.test.js:18:5)</failure>
+    </testcase>
+    <testcase classname="Match Routes Integration Tests DELETE /matchs deletes a match by ID" name="Match Routes Integration Tests DELETE /matchs deletes a match by ID" time="0.051">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\tests\integration\matchs.test.js:18:5)</failure>
+    </testcase>
+    <testcase classname="Match Routes Integration Tests POST /matchs/update updates a match" name="Match Routes Integration Tests POST /matchs/update updates a match" time="0.054">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\tests\integration\matchs.test.js:18:5)</failure>
+    </testcase>
+    <testcase classname="Match Routes Integration Tests GET /matchs/upcoming returns upcoming matches" name="Match Routes Integration Tests GET /matchs/upcoming returns upcoming matches" time="0.046">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\tests\integration\matchs.test.js:18:5)</failure>
+    </testcase>
+    <testcase classname="Match Routes Integration Tests GET /matchs/live returns live matches" name="Match Routes Integration Tests GET /matchs/live returns live matches" time="0.05">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\match-service\tests\integration\matchs.test.js:18:5)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

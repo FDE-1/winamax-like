@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - winamax
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - winamax
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+networks:
+  winamax:
+    external: false
+
+volumes:
+  grafana-data:

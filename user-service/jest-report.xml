@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="2" failures="2" errors="0" time="1.762">
+  <testsuite name="Auth Endpoints" errors="0" failures="2" skipped="0" timestamp="2025-07-03T20:41:17" time="1.473" tests="2">
+    <testcase classname="Auth Endpoints POST /auth/register registers a new user" name="Auth Endpoints POST /auth/register registers a new user" time="0.088">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\user-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\user-service\tests\integrations\auth.test.js:14:5)</failure>
+    </testcase>
+    <testcase classname="Auth Endpoints POST /auth/login logs in and returns token" name="Auth Endpoints POST /auth/login logs in and returns token" time="0.049">
+      <failure>error: authentification par mot de passe �chou�e pour l&apos;utilisateur  � postgres �
+    at C:\Users\frede\Desktop\Projects\jsct-smartmeal\user-service\node_modules\pg-pool\index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.&lt;anonymous&gt; (C:\Users\frede\Desktop\Projects\jsct-smartmeal\user-service\tests\integrations\auth.test.js:14:5)</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
