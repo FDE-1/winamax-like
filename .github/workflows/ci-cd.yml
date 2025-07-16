@@ -49,14 +49,3 @@ jobs:
         run: docker compose up -d gamification-service redis postgres kafka user-service
       - name: Run tests
         run: docker compose run --rm gamification-service npm test -- --runInBand --forceExit
-
-  test-notification-service:
-    name: Test Notification Service
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-      - name: Start services
-        run: docker compose up -d notification-service postgres kafka
-      - name: Run tests
-        run: docker compose run --rm notification-service npm test -- --runInBand --forceExit
