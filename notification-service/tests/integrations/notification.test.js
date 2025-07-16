@@ -13,7 +13,16 @@ describe('Notification Service Integration Test', () => {
         await kafkaProducer.connect();
 
         socketClient = io(NOTIFICATION_URL, { transports: ['websocket'] });
+
+        // Attendre la connexion socket
         await new Promise(resolve => socketClient.on('connect', resolve));
+
+        // Authentifier et attendre confirmation
+        await new Promise((resolve, reject) => {
+            socketClient.emit('authenticate', 1);
+            socketClient.once('authenticated', resolve);
+            setTimeout(() => reject(new Error('Timeout: authentication non reçue')), 5000);
+        });
     }, TEST_TIMEOUT);
 
     afterAll(async () => {
@@ -26,10 +35,9 @@ describe('Notification Service Integration Test', () => {
         const matchId = 1;
         const goalData = { team: 'Team A', minute: 78 };
 
-        socketClient.emit('authenticate', userIdToNotify);
-
+        // S’abonner à match.goal AVANT d’envoyer l’événement Kafka
         const notificationPromise = new Promise((resolve, reject) => {
-            socketClient.on('match.goal', (data) => {
+            socketClient.once('match.goal', (data) => {
                 try {
                     expect(data.matchId).toBe(matchId);
                     expect(data.team).toBe(goalData.team);
@@ -41,12 +49,13 @@ describe('Notification Service Integration Test', () => {
             setTimeout(() => reject(new Error('Timeout: notification non reçue')), 10000);
         });
 
+        // Publier un événement Kafka
         await kafkaProducer.send({
             topic: 'match-events',
             messages: [{
                 value: JSON.stringify({
                     type: 'match.goal',
-                    matchId: matchId,
+                    matchId,
                     data: goalData,
                 }),
             }],
