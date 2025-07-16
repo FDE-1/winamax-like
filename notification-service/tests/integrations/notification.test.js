@@ -16,6 +16,7 @@ describe('Notification Service Integration Test', () => {
         await kafkaProducer.connect();
 
         console.log('Connecting WebSocket...');
+        console.log(NOTIFICATION_URL);
         socketClient = io(NOTIFICATION_URL, { transports: ['websocket'] });
 
         await new Promise(resolve => {
