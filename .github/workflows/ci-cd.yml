@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker Compose
         run: |
-          docker-compose build
+          docker compose build
 
   test-match-service:
     name: Test Match Service
@@ -24,9 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Start services
-        run: docker-compose up -d match-service redis postgres kafka zookeeper
+        run: docker compose up -d match-service redis postgres kafka zookeeper
       - name: Run tests
-        run: docker-compose run --rm match-service npm test -- --detectOpenHandles --forceExit
+        run: docker compose run --rm match-service npm test -- --detectOpenHandles --forceExit
 
   test-user-service:
     name: Test User Service
@@ -35,9 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Start services
-        run: docker-compose up -d user-service redis postgres
+        run: docker compose up -d user-service redis postgres
       - name: Run tests
-        run: docker-compose run --rm user-service npm test -- --detectOpenHandles --forceExit
+        run: docker compose run --rm user-service npm test -- --detectOpenHandles --forceExit
 
   test-gamification-service:
     name: Test Gamification Service
@@ -46,9 +46,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Start services
-        run: docker-compose up -d gamification-service redis postgres kafka user-service
+        run: docker compose up -d gamification-service redis postgres kafka user-service
       - name: Run tests
-        run: docker-compose run --rm gamification-service npm test -- --runInBand --forceExit
+        run: docker compose run --rm gamification-service npm test -- --runInBand --forceExit
 
   test-notification-service:
     name: Test Notification Service
@@ -57,6 +57,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Start services
-        run: docker-compose up -d notification-service postgres kafka
+        run: docker compose up -d notification-service postgres kafka
       - name: Run tests
-        run: docker-compose run --rm notification-service npm test -- --runInBand --forceExit
+        run: docker compose run --rm notification-service npm test -- --runInBand --forceExit
