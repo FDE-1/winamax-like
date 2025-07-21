@@ -8,20 +8,21 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - winamax
+      - app-network
 
   grafana:
     image: grafana/grafana
     ports:
-      - "3001:3000"
+      - "3005:3000"
     networks:
-      - winamax
+      - app-network
     volumes:
       - grafana-data:/var/lib/grafana
 
 networks:
-  winamax:
-    external: false
+  app-network:
+    name: app-network
+    driver: bridge
 
 volumes:
   grafana-data:

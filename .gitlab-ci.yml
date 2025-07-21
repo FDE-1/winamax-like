@@ -1,0 +1,85 @@
+# stages:
+#   - test
+#   # - build
+#   # - scan
+
+# variables:
+#   POSTGRES_HOST: postgres
+#   REDIS_HOST: redis
+#   POSTGRES_USER: postgres
+#   POSTGRES_DB: winamax
+#   POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+#   DOCKER_HOST: tcp://docker:2376
+#   DOCKER_TLS_CERTDIR: ""
+#   CI_REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD
+#   CI_REGISTRY_USER: $CI_REGISTRY_USER
+#   CI_REGISTRY: $CI_REGISTRY
+#   CI_REGISTRY_IMAGE: $CI_REGISTRY_IMAGE
+
+# test:
+#   stage: test
+#   image: docker:20.10
+#   services:
+#     - name: postgres:15
+#       alias: postgres
+#     - name: redis:7
+#       alias: redis
+#     - name: docker:20.10-dind
+#       alias: docker
+#       command: ["--tls=false", "--host", "tcp://0.0.0.0:2376"]
+#   variables:
+#     POSTGRES_PORT: 5432
+#     REDIS_PORT: 6379
+#   before_script:
+#     - apk add --no-cache nodejs npm postgresql-client docker-compose
+#     - until pg_isready -h $POSTGRES_HOST -U $POSTGRES_USER; do sleep 1; done
+#     - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -f init-db.sql
+#     # - docker-compose -f docker-compose.observability.yml up -d
+#   script:
+#     - cd match-service
+#     - npm ci
+#     - npm run lint || true
+#     - npm run test:coverage
+#     - npm audit --audit-level=high || true
+#   artifacts:
+#     when: always
+#     paths:
+#       - match-service/coverage
+#       - match-service/jest-report.xml
+
+
+# build:
+#   stage: build
+#   image: docker:20.10
+#   variables:
+#     DOCKER_HOST: unix:///var/run/docker.sock
+#     DOCKER_PRIVILEGED: "true"
+#   before_script:
+#     - docker info
+#   script:
+#     - docker-compose up -d
+#     - docker-compose ps
+#     - |
+#       # Wait for service to be ready
+#       echo "Waiting for service..."
+#       for i in {1..10}; do
+#         if curl -sSf http://match-service:3000/api/matches >/dev/null; then  # Use service name, not localhost
+#           echo "Service is up!"
+#           break
+#         else
+#           echo "Retrying... ($i/10)"
+#           sleep 5
+#         fi
+#       done
+#     - docker-compose down
+#   only:
+#     - main
+
+# scan:
+#   stage: scan
+#   image: aquasec/trivy:latest
+#   script:
+#     - docker pull $CI_REGISTRY_IMAGE/match-service:latest || true
+#     - trivy image $CI_REGISTRY_IMAGE/match-service:latest || true
+#   only:
+#     - main

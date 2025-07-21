@@ -8,3 +8,9 @@ scrape_configs:
   - job_name: 'user-service'
     static_configs:
       - targets: ['user-service:3001']
+  # - job_name: 'gamification-service'
+  #   static_configs:
+  #     - targets: ['localhost:3002']
+  # - job_name: 'notification-service'
+  #   static_configs:
+  #     - targets: ['localhost:3003']
